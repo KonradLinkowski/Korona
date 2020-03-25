@@ -6,7 +6,8 @@ export class DataService {
       baseURL: 'https://api.covid19api.com/'
     });
     this.cache = {
-      dataForCountry: {}
+      dataByCountry: {},
+      totalDataByCountry: {}
     };
   }
 
@@ -14,13 +15,24 @@ export class DataService {
     return this.request.get('countries').then(response => response.data);
   }
 
-  getDataForCountry(contry) {
-    if (this.cache.dataForCountry[contry]) {
-      return Promise.resolve(this.cache.dataForCountry[contry]);
+  getTotalDataByCountry(country) {
+    if (this.cache.totalDataByCountry[country]) {
+      return Promise.resolve(this.cache.totalDataByCountry[country]);
     }
-    return this.request.get(`dayone/country/${contry}/status/confirmed`)
+    return this.request.get(`total/country/${country}/status/confirmed`)
     .then(response => {
-      this.cache.dataForCountry[contry] = response.data;
+      this.cache.totalDataByCountry[country] = response.data;
+      return response.data;
+    });
+  }
+
+  getDataByCountry(country) {
+    if (this.cache.dataByCountry[country]) {
+      return Promise.resolve(this.cache.dataByCountry[country]);
+    }
+    return this.request.get(`dayone/country/${country}/status/confirmed`)
+    .then(response => {
+      this.cache.dataByCountry[country] = response.data;
       return response.data;
     });
   }

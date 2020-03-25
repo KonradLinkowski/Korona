@@ -1,6 +1,9 @@
 # Korona
 Coronavirus cases by country
 
+## Data source
+https://covid19api.com/
+
 ## Installation
 ```bash
 git clone https://github.com/KonradLinkowski/Korona

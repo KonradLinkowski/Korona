@@ -3,7 +3,7 @@ import { DataService } from './data_service';
 import { MultiselectButtons } from './multiselect/multiselect';
 
 const fetchDataAndUpdateChart = async (chart, countries, dataService) => {
-  const dataForCountries = (await Promise.all(countries.map(country => dataService.getDataForCountry(country))))
+  const dataForCountries = (await Promise.all(countries.map(country => dataService.getTotalDataByCountry(country))))
     .map((data, i) => ({ country: countries[i], data }));
   const existingLabels = chart.data.datasets.map(e => e.label);
   const notExistingYet = dataForCountries.filter(d => !existingLabels.includes(d.country));

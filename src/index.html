@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Megrim&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Korona</title>
-  <link rel="stylesheet" href="main.css">
 </head>
 <body>
+  <header class="header">
+    <h1 class="title">Korona</h1>
+    <h2 class="sub-title">Coronavirus cases by country</h2>
+  </header>
+  <div>
+    <label id="combo2-label" class="combo-label">Select the countries</label>
+    <span id="combo2-remove" style="display: none">remove</span>
+    <ul class="selected-options" id="combo2-selected"></ul>
+    <div class="combo js-multi-buttons">
+      <div role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-owns="listbox2" class="input-wrapper">
+        <input
+          aria-activedescendant=""
+          aria-autocomplete="list"
+          aria-labelledby="combo2-label combo2-selected"
+          id="combo2"
+          class="combo-input"
+          type="text">
+      </div>
+    <div class="combo-menu" role="listbox" aria-multiselectable="true" id="listbox2"></div>
+  </div>
   <div class="chart-box">
     <canvas class="chart" id="chart" aria-label="Data chart" role="img"></canvas>
   </div>

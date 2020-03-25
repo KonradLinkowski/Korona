@@ -5,6 +5,9 @@ export class DataService {
     this.request = axios.create({
       baseURL: 'https://api.covid19api.com/'
     });
+    this.cache = {
+      dataForCountry: {}
+    };
   }
 
   getCountries() {
@@ -12,7 +15,13 @@ export class DataService {
   }
 
   getDataForCountry(contry) {
+    if (this.cache.dataForCountry[contry]) {
+      return Promise.resolve(this.cache.dataForCountry[contry]);
+    }
     return this.request.get(`dayone/country/${contry}/status/confirmed`)
-    .then(response => response.data);
+    .then(response => {
+      this.cache.dataForCountry[contry] = response.data;
+      return response.data;
+    });
   }
 }

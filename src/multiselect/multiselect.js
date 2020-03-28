@@ -173,7 +173,7 @@ MultiselectButtons.prototype.onInput = function() {
   this.filterOptions(curValue);
 
   // if active option is not in filtered options, set it to first filtered option
-  if (this.filteredOptions.indexOf(this.options[this.activeIndex]) < 0) {
+  if (this.filteredOptions.length && ~this.filteredOptions.indexOf(this.options[this.activeIndex])) {
     const firstFilteredIndex = this.options.indexOf(this.filteredOptions[0]);
     this.onOptionChange(firstFilteredIndex);
   }

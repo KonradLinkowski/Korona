@@ -22,6 +22,11 @@ body {
   overflow: auto;
 }
 
+body.dark {
+  background: black;
+  filter: invert();
+}
+
 .header {
   text-align: center;
   line-height: 1;
@@ -37,6 +42,67 @@ body {
 .header .sub-title {
   margin: 0;
   font-size: 1.3rem;
+}
+
+.theme-toggle-wrapper {
+  right: 0;
+  top: 0;
+  position: absolute;
+}
+
+.theme-toggle-label {
+  opacity: 0;
+  position: absolute;
+}
+
+.theme-toggle {
+  margin: 10px;
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  -webkit-appearance: none;
+  background: #c6c6c6;
+  outline: none;
+  box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+  transition: .5s;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 5px 0 hsla(0, 0%, 0%, .26);
+}
+
+.theme-toggle::before,
+.theme-toggle::after {
+  color: white;
+  display: inline-block;
+  transition: all .2s ease;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+  background: black;
+}
+
+.theme-toggle::before {
+  line-height: 2.5rem;
+  content: url('google/images/moon.svg');
+  opacity: 1;
+}
+
+.theme-toggle::after {
+  line-height: 3rem;
+  content: url('google/images/sun.svg');
+  opacity: 0;
+}
+
+.theme-toggle:checked::before {
+  opacity: 0;
+}
+
+.theme-toggle:checked::after {
+  opacity: 1;
 }
 
 .chart-type-select-wrapper {
@@ -122,6 +188,9 @@ body {
   
   .header .sub-title {
     font-size: 2rem;
+  }
+  .theme-toggle-wrapper {
+    left: 0;
   }
 }
 

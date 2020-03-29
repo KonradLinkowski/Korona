@@ -7,16 +7,27 @@ class Main {
     this.dataService = dataService;
     this.typeToggle = document.querySelector('#chart-type-select');
     this.typeToggle.addEventListener('change', event => {
-      console.log(event.target);
       this.changeChartType(event.target.checked ? 'logarithmic' : 'linear');
     });
     this.chart = createChart('#chart');
+    this.themeToggle = document.querySelector('#theme-toggle');
+    this.themeToggle.addEventListener('change', event => {
+      this.changeTheme(event.target.checked);
+    });
+
+    const isDarkTheme = (localStorage.getItem('theme') === 'dark') || false;
+    this.themeToggle.checked = isDarkTheme;
+    this.changeTheme(isDarkTheme);
 
     this.start();
   }
 
+  changeTheme(isDark) {
+    document.body.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }
+
   changeChartType(type) {
-    console.log(type);
     this.chart.options.scales.yAxes[0].type = type;
     this.chart.update();
   }

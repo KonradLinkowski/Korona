@@ -1,5 +1,5 @@
 # Korona
-Coronavirus cases by country
+COVID-19 cases by country
 
 ## Data source
 https://covid19api.com/

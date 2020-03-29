@@ -1,7 +1,7 @@
 {
   "name": "korona",
   "version": "1.0.0",
-  "description": "Coronavirus charts",
+  "description": "COVID-19 charts",
   "main": "index.js",
   "repository": "https://github.com/KonradLinkowski/Korona",
   "author": "Konrad Linkowski",

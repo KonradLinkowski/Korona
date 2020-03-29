@@ -61,7 +61,7 @@ class Main {
   }
 
   async start() {
-    const countries = await this.dataService.getCountries();
+    const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
     const multiButtonEl = document.querySelector('.js-multi-buttons');
     const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(country => country.Country));
     multiButtonComponent.init();

@@ -37,9 +37,12 @@ export const  createChart = selector => {
             unit: 'day'
           }
         }],
-        ticks: {
-          beginAtZero: true
-        }
+        yAxes: [{
+          type: 'linear',
+          ticks: {
+            beginAtZero: true
+          }
+        }]
       }
     }
   });

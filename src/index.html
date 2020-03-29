@@ -15,7 +15,7 @@
   </header>
   <main>
     <div>
-      <label id="combo2-label" class="combo-label">Select the countries</label>
+      <label for="combo2" id="combo2-label" class="combo-label">Select the countries</label>
       <span id="combo2-remove" style="display: none">remove</span>
       <ul class="selected-options" id="combo2-selected"></ul>
       <div class="combo js-multi-buttons">
@@ -29,6 +29,10 @@
             type="text">
         </div>
       <div class="combo-menu" role="listbox" aria-multiselectable="true" id="listbox2"></div>
+    </div>
+    <div class="chart-type-select-wrapper">
+      <label for="chart-type-select">Chart Y axis</label>
+      <input data-tg-off="linear" data-tg-on="logarithmic" id="chart-type-select" type="checkbox" class="chart-type-select">
     </div>
     <div class="chart-box">
       <canvas class="chart" id="chart" aria-label="Data chart" role="img"></canvas>

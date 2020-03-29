@@ -39,6 +39,60 @@ body {
   font-size: 1.3rem;
 }
 
+.chart-type-select-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.chart-type-select {
+  margin-left: 10px;
+  top: 50%;
+  position: relative;
+  width: 6rem;
+  height: 1.5rem;
+  -webkit-appearance: none;
+  background: #c6c6c6;
+  outline: none;
+  box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+  transition: .5s;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.chart-type-select::before,
+.chart-type-select::after {
+  color: white;
+  display: inline-block;
+  transition: all .2s ease;
+  width: 100%;
+  line-height: 1.5rem;
+  text-align: center;
+  position: absolute;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+}
+
+.chart-type-select::before {
+  content: attr(data-tg-off);
+  background:black;
+  left: 0;
+}
+
+.chart-type-select::after {
+  content: attr(data-tg-on);
+  background: #6200ee;
+  left: 100%;
+}
+
+.chart-type-select:checked::before {
+  left: -100%;
+}
+
+.chart-type-select:checked::after {
+  left: 0;
+}
+
 .chart-box {
   position: relative;
   height: 40vh;

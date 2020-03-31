@@ -1,18 +1,21 @@
 import { createChart, getColor } from './create_chart';
 import { DataService } from './data_service';
 import { MultiselectButtons } from './multiselect/multiselect';
+import { IPService } from './ip_service';
 
 class Main {
   $typeToggle: HTMLInputElement;
   $themeToggle: HTMLInputElement;
   casesChart: Chart;
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private ipService: IPService) {
     this.$typeToggle = document.querySelector('#chart-type-select');
     this.$typeToggle.addEventListener('change', event => {
       this.changeChartType((event.target as HTMLInputElement).checked ? 'logarithmic' : 'linear');
     });
+
     this.casesChart = createChart('#cases-chart');
+
     this.$themeToggle = document.querySelector('#theme-toggle');
     this.$themeToggle.addEventListener('change', event => {
       this.changeTheme((event.target as HTMLInputElement).checked);
@@ -64,13 +67,18 @@ class Main {
   }
 
   async start() {
+    const { country } = await this.ipService.getUserIPData();
     const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
     const multiButtonEl = document.querySelector('.js-multi-buttons') as HTMLElement;
-    const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(country => country.Country));
+    const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(c => c.Country));
     multiButtonComponent.addEventListener('change', countriesNames => {
       this.fetchDataAndUpdateChart(this.casesChart, countriesNames);
     });
+    const index = countries.findIndex(c => c.Country === country);
+    if (index !== -1) {
+      multiButtonComponent.selectOption(index);
+    }
   }
 }
 
-const main = new Main(new DataService());
+const main = new Main(new DataService(), new IPService());

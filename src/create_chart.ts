@@ -20,7 +20,7 @@ export const getColor = (name: string) => {
   return [template(color[0], color[1], color[2], 1), template(color[0], color[1], color[2], 0.5)];
 };
 
-export const  createChart = (selector: string) => {
+export const createChart = (selector: string) => {
   const $canvas = document.querySelector(selector) as HTMLCanvasElement;
   const ctx = $canvas.getContext('2d');
   return  new Chart(ctx, {

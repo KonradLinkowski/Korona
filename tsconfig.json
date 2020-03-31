@@ -6,7 +6,7 @@
       "noImplicitAny": true,
       "outDir": "./lib/",
       "moduleResolution": "node",
-      "lib": ["dom", "ESNext"]
+      "lib": ["dom", "ESNext", "dom.iterable"]
   },
   "include": [
     "src/**/*.ts"

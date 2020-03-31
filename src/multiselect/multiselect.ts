@@ -121,11 +121,11 @@ export class MultiselectButtons {
   activeIndex = 0;
   open = false;
   ignoreBlur: boolean;
-  filteredOptions: any[];
+  filteredOptions: string[];
   selectedOptions: string[] = [];
   eventListeners: EventListener[] = [];
 
-  constructor(private el: HTMLElement, private options: any[]) {
+  constructor(private el: HTMLElement, private options: string[]) {
     // element refs
     this.comboEl = el.querySelector('[role=combobox]');
     this.inputEl = el.querySelector('input');
@@ -308,7 +308,6 @@ export class MultiselectButtons {
     if (isSelected) {
       this.removeOption(index);
     }
-
     else {
       this.selectOption(index);
     }

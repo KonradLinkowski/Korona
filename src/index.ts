@@ -1,5 +1,5 @@
 import { createChart, getColor } from './create_chart';
-import { DataService } from './data_service';
+import { DataService, Country, CountryData } from './data_service';
 import { MultiselectButtons } from './multiselect/multiselect';
 import { IPService } from './ip_service';
 
@@ -7,6 +7,8 @@ class Main {
   $typeToggle: HTMLInputElement;
   $themeToggle: HTMLInputElement;
   casesChart: Chart;
+  countries: Country[] = [];
+  userCountry: string;
 
   constructor(private dataService: DataService, private ipService: IPService) {
     this.$typeToggle = document.querySelector('#chart-type-select');
@@ -25,7 +27,7 @@ class Main {
     this.$themeToggle.checked = isDarkTheme;
     this.changeTheme(isDarkTheme);
 
-    this.start();
+    this.fetchData().then(this.init.bind(this));
   }
 
   changeTheme(isDark: boolean) {
@@ -38,43 +40,50 @@ class Main {
     this.casesChart.update();
   }
 
-  async fetchDataAndUpdateChart(chart: Chart, countries: string[]) {
-    const dataForCountries = (await Promise.all(countries.map(country => this.dataService.getTotalDataByCountry(country))))
-      .map((data, i) => ({ country: countries[i], data }));
+  updateChart(chart: Chart, dataForCountries: { country: Country, data: CountryData[] }[]) {
     const existingLabels = chart.data.datasets.map(e => e.label);
-    const notExistingYet = dataForCountries.filter(d => !existingLabels.includes(d.country));
-    const notExistingAnymore = existingLabels.filter(l => !countries.includes(l));
-    Array.prototype.push.apply(chart.data.datasets, notExistingYet.map(countryData => {
+    const dataToAdd = dataForCountries.filter(d => !existingLabels.find(l => l === d.country.Country));
+    const labelsToDelete = existingLabels.filter(l => !dataForCountries.find(d => l === d.country.Country));
+    Array.prototype.push.apply(chart.data.datasets, dataToAdd.map(countryData => {
       const data = Array.isArray(countryData.data) ? countryData.data.map(entry => ({
         x: new Date(entry.Date),
         y: entry.Cases
       })) : [];
-      const [borderColor, backgroundColor] = getColor(countryData.country);
+      const [borderColor, backgroundColor] = getColor(countryData.country.Country);
       return {
         data,
-        label: countryData.country,
+        label: countryData.country.Country,
         backgroundColor,
         borderColor,
         borderWidth: 2,
         pointRadius: 5
       };
     }));
-    notExistingAnymore.forEach(c => {
-      const index = chart.data.datasets.findIndex(d => d.label === c);
+    labelsToDelete.forEach(label => {
+      const index = chart.data.datasets.findIndex(d => d.label === label);
       chart.data.datasets.splice(index, 1);
     });
     chart.update();
   }
 
-  async start() {
-    const country = await this.ipService.getUserCountry();
-    const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
+  async onCountriesChange(names: string[]) {
+    const currentCountries = names.map(name => this.countries.find(c => c.Country === name));
+    const dataForCountries = (await Promise.all(currentCountries
+        .map(country => this.dataService.getTotalDataByCountry(country.Slug))
+      )).map((data, i) => ({ country: currentCountries[i], data }));
+    this.updateChart(this.casesChart, dataForCountries);
+  }
+
+  async fetchData() {
+    this.userCountry = await this.ipService.getUserCountry();
+    this.countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
+  }
+
+  init() {
     const multiButtonEl = document.querySelector('.js-multi-buttons') as HTMLElement;
-    const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(c => c.Country));
-    multiButtonComponent.addEventListener('change', countriesNames => {
-      this.fetchDataAndUpdateChart(this.casesChart, countriesNames);
-    });
-    const index = countries.findIndex(c => c.Country === country);
+    const multiButtonComponent = new MultiselectButtons(multiButtonEl, this.countries.map(c => c.Country));
+    multiButtonComponent.addEventListener('change', this.onCountriesChange.bind(this));
+    const index = this.countries.findIndex(c => c.Country === this.userCountry);
     if (index !== -1) {
       multiButtonComponent.selectOption(index);
     }

@@ -5,18 +5,18 @@ import { MultiselectButtons } from './multiselect/multiselect';
 class Main {
   constructor(dataService) {
     this.dataService = dataService;
-    this.typeToggle = document.querySelector('#chart-type-select');
-    this.typeToggle.addEventListener('change', event => {
+    this.$typeToggle = document.querySelector('#chart-type-select');
+    this.$typeToggle.addEventListener('change', event => {
       this.changeChartType(event.target.checked ? 'logarithmic' : 'linear');
     });
-    this.chart = createChart('#chart');
-    this.themeToggle = document.querySelector('#theme-toggle');
-    this.themeToggle.addEventListener('change', event => {
+    this.casesChart = createChart('#cases-chart');
+    this.$themeToggle = document.querySelector('#theme-toggle');
+    this.$themeToggle.addEventListener('change', event => {
       this.changeTheme(event.target.checked);
     });
 
     const isDarkTheme = (localStorage.getItem('theme') === 'dark') || false;
-    this.themeToggle.checked = isDarkTheme;
+    this.$themeToggle.checked = isDarkTheme;
     this.changeTheme(isDarkTheme);
 
     this.start();
@@ -28,8 +28,8 @@ class Main {
   }
 
   changeChartType(type) {
-    this.chart.options.scales.yAxes[0].type = type;
-    this.chart.update();
+    this.casesChart.options.scales.yAxes[0].type = type;
+    this.casesChart.update();
   }
 
   async fetchDataAndUpdateChart(chart, countries) {
@@ -64,9 +64,8 @@ class Main {
     const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
     const multiButtonEl = document.querySelector('.js-multi-buttons');
     const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(country => country.Country));
-    multiButtonComponent.init();
     multiButtonComponent.addEventListener('change', countries => {
-      this.fetchDataAndUpdateChart(this.chart, countries);
+      this.fetchDataAndUpdateChart(this.casesChart, countries);
     });
   }
 }

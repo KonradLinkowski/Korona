@@ -1,6 +1,7 @@
 import Chart from 'chart.js';
 
-const randomFactor = Math.floor(5 * Math.random());
+// const randomFactor = Math.floor(5 * Math.random());
+const randomFactor = 0
 
 export const hashStringToInt = string => {
   let hash = 0;
@@ -15,7 +16,7 @@ export const hashStringToInt = string => {
 export const getColor = name => {
   const template = (r, g, b, a) => `hsla(${r}, ${g}%, ${b}%, ${a})`;
   const hash = hashStringToInt(name);
-  const color = [(((hash + randomFactor) ** 3) * 15) % 360, 100, 60];
+  const color = [(hash % 360) * 17 + randomFactor, 100, 60];
   return [template(...color, 1), template(...color, 0.5)];
 };
 

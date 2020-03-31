@@ -1,38 +1,38 @@
 import './multiselect.css';
 
-const Keys = {
-  Backspace: 'Backspace',
-  Clear: 'Clear',
-  Down: 'ArrowDown',
-  End: 'End',
-  Enter: 'Enter',
-  Escape: 'Escape',
-  Home: 'Home',
-  Left: 'ArrowLeft',
-  PageDown: 'PageDown',
-  PageUp: 'PageUp',
-  Right: 'ArrowRight',
-  Space: ' ',
-  Tab: 'Tab',
-  Up: 'ArrowUp'
+enum Keys {
+  Backspace = 'Backspace',
+  Clear = 'Clear',
+  Down = 'ArrowDown',
+  End = 'End',
+  Enter = 'Enter',
+  Escape = 'Escape',
+  Home = 'Home',
+  Left = 'ArrowLeft',
+  PageDown = 'PageDown',
+  PageUp = 'PageUp',
+  Right = 'ArrowRight',
+  Space = ' ',
+  Tab = 'Tab',
+  Up = 'ArrowUp'
 };
 
-const MenuActions = {
-  Close: 0,
-  CloseSelect: 1,
-  First: 2,
-  Last: 3,
-  Next: 4,
-  Open: 5,
-  Previous: 6,
-  Select: 7,
-  Space: 8,
-  Type: 9
+enum MenuActions {
+  Close = 0,
+  CloseSelect = 1,
+  First = 2,
+  Last = 3,
+  Next = 4,
+  Open = 5,
+  Previous = 6,
+  Select = 7,
+  Space = 8,
+  Type = 9
 };
 
 // filter an array of options against an input string
 // returns an array of options that begin with the filter string, case-independent
-function filterOptions(options = [], filter, exclude = []) {
+function filterOptions(options: string[] = [], filter: string, exclude: string[] = []) {
   return options.filter(option => {
     const matches = option.toLowerCase().indexOf(filter.toLowerCase()) === 0;
     return matches && exclude.indexOf(option) < 0;
@@ -40,7 +40,7 @@ function filterOptions(options = [], filter, exclude = []) {
 }
 
 // return combobox action from key press
-function getActionFromKey(key, menuOpen) {
+function getActionFromKey(key: Keys, menuOpen: boolean) {
   // handle opening when closed
   if (!menuOpen && key === Keys.Down) {
     return MenuActions.Open;
@@ -71,7 +71,7 @@ function getActionFromKey(key, menuOpen) {
 }
 
 // get updated option index
-function getUpdatedIndex(current, max, action) {
+function getUpdatedIndex(current: number, max: number, action: MenuActions) {
   switch(action) {
     case MenuActions.First:
       return 0;
@@ -87,12 +87,12 @@ function getUpdatedIndex(current, max, action) {
 }
 
 // check if an element is currently scrollable
-function isScrollable(element) {
+function isScrollable(element: HTMLElement) {
   return element && element.clientHeight < element.scrollHeight;
 }
 
 // ensure given child element is within the parent's visible scroll area
-function maintainScrollVisibility(activeElement, scrollParent) {
+function maintainScrollVisibility(activeElement: HTMLElement, scrollParent: HTMLElement) {
   const { offsetHeight, offsetTop } = activeElement;
   const { offsetHeight: parentOffsetHeight, scrollTop } = scrollParent;
 
@@ -107,10 +107,26 @@ function maintainScrollVisibility(activeElement, scrollParent) {
   }
 }
 
+export interface EventListener {
+  event: string;
+  callback: (data: any) => any
+};
+
 export class MultiselectButtons {
-  constructor(el, options) {
+  comboEl: HTMLElement;
+  inputEl: HTMLInputElement;
+  listboxEl: HTMLElement;
+  idBase: string;
+  selectedEl: HTMLElement;
+  activeIndex = 0;
+  open = false;
+  ignoreBlur: boolean;
+  filteredOptions: any[];
+  selectedOptions: string[] = [];
+  eventListeners: EventListener[] = [];
+
+  constructor(private el: HTMLElement, private options: any[]) {
     // element refs
-    this.el = el;
     this.comboEl = el.querySelector('[role=combobox]');
     this.inputEl = el.querySelector('input');
     this.listboxEl = el.querySelector('[role=listbox]');
@@ -119,20 +135,11 @@ export class MultiselectButtons {
     this.selectedEl = document.getElementById(`${this.idBase}-selected`);
 
     // data
-    this.options = options;
-    this.filteredOptions = options;
-
-    // state
-    this.activeIndex = 0;
-    this.open = false;
-    this.selectedOptions = [];
-
-    // event listeners
-    this.eventListeners = [];
+    this.filteredOptions = this.options;
 
     this.init();
   }
-  
+
   init() {
     this.inputEl.addEventListener('input', this.onInput.bind(this));
     this.inputEl.addEventListener('blur', this.onInputBlur.bind(this));
@@ -154,14 +161,14 @@ export class MultiselectButtons {
     });
   }
 
-  filterOptions(value) {
+  filterOptions(value: string) {
     this.filteredOptions = filterOptions(this.options, value);
 
     // hide/show options based on filtering
-    const options = this.el.querySelectorAll('[role=option]');
+    const options = this.el.querySelectorAll('[role=option]') as NodeListOf<HTMLElement>;
     [...options].forEach(optionEl => {
-      const value = optionEl.innerText;
-      if (this.filteredOptions.indexOf(value) > -1) {
+      const val = optionEl.innerText;
+      if (this.filteredOptions.indexOf(val) > -1) {
         optionEl.style.display = 'block';
       }
       else {
@@ -175,7 +182,7 @@ export class MultiselectButtons {
     this.filterOptions(curValue);
 
     // if active option is not in filtered options, set it to first filtered option
-    if (this.filteredOptions.length && ~this.filteredOptions.indexOf(this.options[this.activeIndex])) {
+    if (this.filteredOptions.length && this.filteredOptions.indexOf(this.options[this.activeIndex]) === -1) {
       const firstFilteredIndex = this.options.indexOf(this.filteredOptions[0]);
       this.onOptionChange(firstFilteredIndex);
     }
@@ -186,13 +193,13 @@ export class MultiselectButtons {
     }
   }
 
-  onInputKeyDown(event) {
+  onInputKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
     const max = this.filteredOptions.length - 1;
     const activeFilteredIndex = this.filteredOptions.indexOf(this.options[this.activeIndex]);
 
-    const action = getActionFromKey(key, this.open);
+    const action = getActionFromKey(key as Keys, this.open);
 
     switch(action) {
       case MenuActions.Next:
@@ -223,13 +230,13 @@ export class MultiselectButtons {
       this.ignoreBlur = false;
       return;
     }
-  
+
     if (this.open) {
       this.updateMenuState(false, false);
     }
   }
 
-  onOptionChange(index) {
+  onOptionChange(index: number) {
     this.activeIndex = index;
     this.inputEl.setAttribute('aria-activedescendant', `${this.idBase}-${index}`);
 
@@ -241,11 +248,11 @@ export class MultiselectButtons {
     options[index].classList.add('option-current');
 
     if (this.open && isScrollable(this.listboxEl)) {
-      maintainScrollVisibility(options[index], this.listboxEl);
+      maintainScrollVisibility(options[index] as HTMLElement, this.listboxEl);
     }
   }
 
-  onOptionClick(index) {
+  onOptionClick(index: number) {
     this.onOptionChange(index);
     this.updateOption(index);
     this.inputEl.focus();
@@ -255,7 +262,7 @@ export class MultiselectButtons {
     this.ignoreBlur = true;
   }
 
-  removeOption(index) {
+  removeOption(index: number) {
     // update aria-selected
     const options = this.el.querySelectorAll('[role=option]');
     options[index].setAttribute('aria-selected', 'false');
@@ -268,7 +275,7 @@ export class MultiselectButtons {
     this.emitEvent('change');
   }
 
-  selectOption(index) {
+  selectOption(index: number) {
     const selected = this.options[index];
     this.activeIndex = index;
 
@@ -293,7 +300,7 @@ export class MultiselectButtons {
     this.emitEvent('change');
   }
 
-  updateOption(index) {
+  updateOption(index: number) {
     const optionEls = this.el.querySelectorAll('[role=option]');
     const optionEl = optionEls[index];
     const isSelected = optionEl.getAttribute('aria-selected') === 'true';
@@ -310,19 +317,21 @@ export class MultiselectButtons {
     this.filterOptions('');
   }
 
-  updateMenuState(open, callFocus = true) {
+  updateMenuState(open: boolean, callFocus = true) {
     this.open = open;
 
     this.comboEl.setAttribute('aria-expanded', `${open}`);
     open ? this.el.classList.add('open') : this.el.classList.remove('open');
-    callFocus && this.inputEl.focus();
+    if (callFocus) {
+      this.inputEl.focus();
+    }
   }
 
-  addEventListener(event, callback) {
+  addEventListener(event: string, callback: (data: any) => any) {
     this.eventListeners.push({ event, callback });
   }
 
-  emitEvent(event) {
+  emitEvent(event: string) {
     this.eventListeners.filter(e => e.event === event).forEach(e => e.callback([...this.selectedOptions]));
   }
 }

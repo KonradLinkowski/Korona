@@ -10,15 +10,17 @@
   "scripts": {
     "start": "parcel serve src/index.html",
     "build": "parcel build src/index.html --public-url ./",
-    "lint": "eslint src/**/*.js"
+    "lint": "tslint --project tsconfig.json"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "chart.js": "^2.9.3"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "parcel-bundler": "^1.12.4"
+    "@types/chart.js": "^2.9.18",
+    "parcel-bundler": "^1.12.4",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
   },
   "browserslist": [
     "last 2 Chrome versions"

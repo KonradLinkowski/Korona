@@ -1,18 +1,21 @@
-import { createChart, getColor } from './chart';
+import { createChart, getColor } from './create_chart';
 import { DataService } from './data_service';
 import { MultiselectButtons } from './multiselect/multiselect';
 
 class Main {
-  constructor(dataService) {
-    this.dataService = dataService;
+  $typeToggle: HTMLInputElement;
+  $themeToggle: HTMLInputElement;
+  casesChart: Chart;
+
+  constructor(private dataService: DataService) {
     this.$typeToggle = document.querySelector('#chart-type-select');
     this.$typeToggle.addEventListener('change', event => {
-      this.changeChartType(event.target.checked ? 'logarithmic' : 'linear');
+      this.changeChartType((event.target as HTMLInputElement).checked ? 'logarithmic' : 'linear');
     });
     this.casesChart = createChart('#cases-chart');
     this.$themeToggle = document.querySelector('#theme-toggle');
     this.$themeToggle.addEventListener('change', event => {
-      this.changeTheme(event.target.checked);
+      this.changeTheme((event.target as HTMLInputElement).checked);
     });
 
     const isDarkTheme = (localStorage.getItem('theme') === 'dark') || false;
@@ -22,17 +25,17 @@ class Main {
     this.start();
   }
 
-  changeTheme(isDark) {
+  changeTheme(isDark: boolean) {
     document.body.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }
 
-  changeChartType(type) {
+  changeChartType(type: 'linear' | 'logarithmic') {
     this.casesChart.options.scales.yAxes[0].type = type;
     this.casesChart.update();
   }
 
-  async fetchDataAndUpdateChart(chart, countries) {
+  async fetchDataAndUpdateChart(chart: Chart, countries: string[]) {
     const dataForCountries = (await Promise.all(countries.map(country => this.dataService.getTotalDataByCountry(country))))
       .map((data, i) => ({ country: countries[i], data }));
     const existingLabels = chart.data.datasets.map(e => e.label);
@@ -62,12 +65,12 @@ class Main {
 
   async start() {
     const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
-    const multiButtonEl = document.querySelector('.js-multi-buttons');
+    const multiButtonEl = document.querySelector('.js-multi-buttons') as HTMLElement;
     const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(country => country.Country));
-    multiButtonComponent.addEventListener('change', countries => {
-      this.fetchDataAndUpdateChart(this.casesChart, countries);
+    multiButtonComponent.addEventListener('change', countriesNames => {
+      this.fetchDataAndUpdateChart(this.casesChart, countriesNames);
     });
   }
 }
 
-new Main(new DataService());
+const main = new Main(new DataService());

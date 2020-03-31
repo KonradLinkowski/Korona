@@ -6,11 +6,13 @@ import { IPService } from './ip_service';
 class Main {
   $typeToggle: HTMLInputElement;
   $themeToggle: HTMLInputElement;
+  $loadingOverlay: HTMLElement;
   casesChart: Chart;
   countries: Country[] = [];
   userCountry: string;
 
   constructor(private dataService: DataService, private ipService: IPService) {
+    this.$loadingOverlay = document.querySelector('.loading-overlay');
     this.$typeToggle = document.querySelector('#chart-type-select');
     this.$typeToggle.addEventListener('change', event => {
       this.changeChartType((event.target as HTMLInputElement).checked ? 'logarithmic' : 'linear');
@@ -28,6 +30,10 @@ class Main {
     this.changeTheme(isDarkTheme);
 
     this.fetchData().then(this.init.bind(this));
+  }
+
+  showLoading(show: boolean) {
+    this.$loadingOverlay.classList.toggle('disabled', !show);
   }
 
   changeTheme(isDark: boolean) {
@@ -72,6 +78,7 @@ class Main {
         .map(country => this.dataService.getTotalDataByCountry(country.Slug))
       )).map((data, i) => ({ country: currentCountries[i], data }));
     this.updateChart(this.casesChart, dataForCountries);
+    this.showLoading(false);
   }
 
   async fetchData() {

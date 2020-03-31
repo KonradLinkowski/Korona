@@ -111,6 +111,10 @@ body.dark {
   opacity: 1;
 }
 
+.main {
+  position: relative;
+}
+
 .chart-type-select-wrapper {
   display: flex;
   align-items: center;
@@ -208,6 +212,49 @@ body.dark {
 .footer .link:hover::after,
 .footer .link:focus::after {
   width: 100%;
+}
+
+.loading-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background: var(--background-color);
+  opacity: 0.8;
+}
+
+.loading-overlay.disabled {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.5s, opacity 0.5s linear;
+}
+
+.loading-overlay .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 4px solid black;
+  border-right-color: transparent;
+  transform-origin: center;
+  animation: spinner-rotate 1s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay .spinner::after {
+  content: "loading";
+  opacity: 0;
 }
 
 @media (min-width: 500px) {

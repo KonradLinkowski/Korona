@@ -67,7 +67,7 @@ class Main {
   }
 
   async start() {
-    const { country } = await this.ipService.getUserIPData();
+    const country = await this.ipService.getUserCountry();
     const countries = (await this.dataService.getCountries()).filter(e => e.Country.length);
     const multiButtonEl = document.querySelector('.js-multi-buttons') as HTMLElement;
     const multiButtonComponent = new MultiselectButtons(multiButtonEl, countries.map(c => c.Country));

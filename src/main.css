@@ -37,7 +37,7 @@ body.dark {
 .header .title {
   margin: 0;
   font-size: 4.8rem;
-  font-family: 'Megrim', cursive;
+  font-family: 'Megrim', 'Lato', Arial, cursive;
 }
 
 .header .sub-title {

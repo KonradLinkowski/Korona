@@ -1,23 +1,43 @@
 import { Chart } from 'chart.js';
 
-// const randomFactor = Math.floor(5 * Math.random());
-const randomFactor = 0
+const template = (r: number, g: number, b: number, a: number) => `hsla(${r}, ${g}%, ${b}%, ${a})`;
 
-export const hashStringToInt = (str: string) => {
-  let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const chr = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + chr;
-      hash |= 0;
-    }
-    return hash;
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min) + min);
+
+const shuffle = (array: any[]) => {
+  const newArray = [...array]
+  for (let i = 0; i < newArray.length - 2; i += 1) {
+    const j = randomInt(i, newArray.length)
+    const temp = newArray[i]
+    newArray[i] = newArray[j]
+    newArray[j] = temp
+  }
+  return newArray;
 };
 
+const allColors = shuffle(Array(360 / 30).fill(0).map((_, i) => {
+  const hue = i * 30;
+  return [template(hue, 100, 60, 1), template(hue, 100, 60, 0.5)];
+}));
+
+const availableColors = [...allColors];
+
+const colorCache: {
+  [key: string]: [string, string]
+} = {};
+
 export const getColor = (name: string) => {
-  const template = (r: number, g: number, b: number, a: number) => `hsla(${r}, ${g}%, ${b}%, ${a})`;
-  const hash = hashStringToInt(name);
-  const color = [(hash % 360) * 17 + randomFactor, 100, 60];
-  return [template(color[0], color[1], color[2], 1), template(color[0], color[1], color[2], 0.5)];
+  if (colorCache[name]) {
+    return colorCache[name];
+  }
+  if (!availableColors.length) {
+    return [template(Math.random() * 360, 100, 60, 1), template(Math.random() * 360, 100, 60, 0.5)]
+  }
+  const randomIndex = Math.floor(Math.random() * availableColors.length);
+  const colors = availableColors[randomIndex];
+  availableColors.splice(randomIndex, 1);
+  colorCache[name] = colors;
+  return colors;
 };
 
 export const createChart = (selector: string) => {

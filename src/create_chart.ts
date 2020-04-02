@@ -31,7 +31,8 @@ export const getColor = (name: string) => {
     return colorCache[name];
   }
   if (!availableColors.length) {
-    return [template(Math.random() * 360, 100, 60, 1), template(Math.random() * 360, 100, 60, 0.5)]
+    const hue = Math.random() * 360;
+    return [template(hue, 100, 60, 1), template(hue, 100, 60, 0.5)]
   }
   const randomIndex = Math.floor(Math.random() * availableColors.length);
   const colors = availableColors[randomIndex];

@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "chart.js": "^2.9.3"
+    "chart.js": "^2.9.4"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.18",
